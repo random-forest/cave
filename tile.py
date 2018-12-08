@@ -4,7 +4,7 @@ class Tile():
     self.y = y
     self.walkable = walkable
 
-    self.neighbors = []
-    self.g = 0
-    self.h = 0
-    self.f = 0
+    self.neighbors = None
+
+  def set_neighbors(self, value):
+    self.neighbors = value
