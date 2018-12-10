@@ -6,12 +6,8 @@ def rand(size):
   return math.floor(random.uniform(0, size))
 
 class Scene():
-  def __init__(self, actors, data):
-    # self.top = sides[0]
-    # self.left = sides[1]
-    # self.bottom = sides[2]
-    # self.right = sides[3]
-
+  def __init__(self, sides, actors, data):
+    self.sides = sides
     self.enter = None
     self.exit = None
 
@@ -31,22 +27,17 @@ class Scene():
       arr.insert(y, [])
       for col in row:
         if col == 1:
-          node = Tile(x, y, True)
+          node = Tile(x, y, True, 1)
           arr[y].insert(x, node)
 
         if col == 0:
-          node = Tile(x, y)
+          node = Tile(x, y, False, 0)
           arr[y].insert(x, node)
 
         x += 1
       y += 1
       x = 0
     
-    # for row in arr:
-    #   for col in row:
-    #     self.get_neighbors(col, arr)
-
-    # self.current_scene.actors[0][1][0].set_grid(self.current_scene.data)
     return arr
 
   def init(self):

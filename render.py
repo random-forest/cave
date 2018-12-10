@@ -51,6 +51,33 @@ class Render():
     p = (pos[0] + ((self.tile_size/2) - 9), pos[1] + ((self.tile_size/2) - 5))
     self.screen.blit(text, p)
 
+  def draw_scene_sides(self):
+    sides = self.state.current_scene.sides
+
+    for node in sides['top']:
+      char, p = node
+      pos = scale_pairs(p[0], p[1], self.tile_size)
+      self.draw_rect("orange", pos)
+      self.draw_text("T", pos)
+
+    for node in sides['left']:
+      char, p = node
+      pos = scale_pairs(p[0], p[1], self.tile_size)
+      self.draw_rect("orange", pos)
+      self.draw_text("L", pos)
+
+    for node in sides['right']:
+      char, p = node
+      pos = scale_pairs(p[0], p[1], self.tile_size)
+      self.draw_rect("orange", pos)
+      self.draw_text("R", pos)
+
+    for node in sides['bottom']:
+      char, p = node
+      pos = scale_pairs(p[0], p[1], self.tile_size)
+      self.draw_rect("orange", pos)
+      self.draw_text("B", pos)
+
   def draw_scene(self):
     scene = self.state.normalize(self.state.current_scene.data)
 
@@ -76,6 +103,9 @@ class Render():
       
     player.update()
     self.draw_rect(player.color, player_pos)
+
+    self.draw_scene_sides()
+    self.state.update()
 
     # enter = self.state.current_scene.enter_points[0]
     # exit = self.state.current_scene.enter_points[1]
