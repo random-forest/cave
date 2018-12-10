@@ -14,10 +14,12 @@ def scale_pairs(a, b, size):
 
 class Render():
   def __init__(self, title, state):
+    pygame.font.init()
+
     self.state = state
     self.screen = pygame.display.set_mode(DISPLAY_SIZE)
     self.bg = pygame.Surface(DISPLAY_SIZE)
-
+    self.font = pygame.font.SysFont('Arial', 18)
     self.tile_size = TILE_SIZE
 
     self.init(title)
@@ -44,8 +46,13 @@ class Render():
 
     self.screen.blit(rect, pos)
 
+  def draw_text(self, content, pos):
+    text = self.font.render(str(content), False, (250, 250, 250))
+    p = (pos[0] + ((self.tile_size/2) - 9), pos[1] + ((self.tile_size/2) - 5))
+    self.screen.blit(text, p)
+
   def draw_scene(self):
-    scene = self.state.current_scene.data
+    scene = self.state.normalize(self.state.current_scene.data)
 
     for row in scene:
       for node in row:
@@ -53,8 +60,10 @@ class Render():
           
         if node.walkable == False:
           self.draw_rect("red", pos)
+          self.draw_text(node.char, pos)
         if node.walkable == True:
           self.draw_rect("black", pos)
+          self.draw_text(node.char, pos)
 
     mt = self.state.mouse_target
 
@@ -62,12 +71,20 @@ class Render():
       p = scale_pairs(mt[0], mt[1], self.tile_size)
       self.draw_rect("blue", p)
 
-      tar = scene[mt[1]][mt[0]]
+    player = self.state.current_scene.actors[0][1][0]
+    player_pos = scale_pairs(player.x, player.y, player.width)
+      
+    player.update()
+    self.draw_rect(player.color, player_pos)
 
-      if tar.neighbors != None:
-        for np in tar.neighbors:
-          pos = scale_pairs(np.x, np.y, self.tile_size)
-          self.draw_rect("grey", pos)
+    # enter = self.state.current_scene.enter_points[0]
+    # exit = self.state.current_scene.enter_points[1]
+
+    # enter_pos = scale_pairs(enter.x, enter.y, self.tile_size)
+    # exit_pos = scale_pairs(exit.x, exit.y, self.tile_size)
+
+    # self.draw_rect("green", enter_pos)
+    # self.draw_rect("orange", exit_pos)
 
 
 

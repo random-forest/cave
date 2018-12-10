@@ -1,75 +1,32 @@
 import numpy as np
 import random, pprint, math
 
+from pathfinding.core.diagonal_movement import DiagonalMovement
+from pathfinding.core.grid import Grid
+from pathfinding.finder.a_star import AStarFinder
+
 from pprint import pprint as p
-from heapq import *
 
 from cave import gen_cave
 from tile import Tile
 from scene import Scene
+from actor import Actor
 
 def scale_pairs(a, b, size):
   return (a * size, b * size)
 
-def heuristic(a, b):
-    return (b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2
-
-def astar(array, start, goal):
-  neighbors = [(0,1),(0,-1),(1,0),(-1,0),(1,1),(1,-1),(-1,1),(-1,-1)]
-  
-  close_set = set()
-  came_from = {}
-  gscore = {start:0}
-  fscore = {start:heuristic(start, goal)}
-  oheap = []
-
-  heappush(oheap, (fscore[start], start))
-  
-  while oheap:
-    current = heappop(oheap)[1]
-    if current == goal:
-      data = []
-
-      while current in came_from:
-        data.append(current)
-        current = came_from[current]
-      
-      return data[::-1]
-
-    close_set.add(current)
-
-    for i, j in neighbors:
-      neighbor = current[0] + i, current[1] + j            
-      tentative_g_score = gscore[current] + heuristic(current, neighbor)
-
-      if 0 <= neighbor[0] < array.shape[0]:
-        if 0 <= neighbor[1] < array.shape[1]:                
-          if array[neighbor[0]][neighbor[1]] == 1:
-            continue
-        else:
-          continue
-      else:
-        continue
+def rand(size):
+  return math.floor(random.uniform(0, size))
                 
-      if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
-        continue
-            
-      if  tentative_g_score < gscore.get(neighbor, 0) or neighbor not in [i[1]for i in oheap]:
-        came_from[neighbor] = current
-        gscore[neighbor] = tentative_g_score
-        fscore[neighbor] = tentative_g_score + heuristic(neighbor, goal)
-        heappush(oheap, (fscore[neighbor], neighbor))
-                
-  return []
-
 class State():
   def __init__(self, scene_size=(100, 100)):
-    self.scenes = self.build_scenes(scene_size)
-
     self.index = 0
+    self.mouse_target = None
+    self.scenes = self.build_scenes(scene_size)
+    
     self.current_scene = self.scenes[self.index]
 
-    self.mouse_target = None
+    self.path = []
 
   def split(self, array, nrows, ncols):
     r, h = array.shape
@@ -83,21 +40,22 @@ class State():
       arr.insert(y, [])
       for col in row:
         if col == 1:
-          node = Tile(x, y)
+          node = Tile(x, y, True, col)
           arr[y].insert(x, node)
 
         if col == 0:
-          node = Tile(x, y, True)
+          node = Tile(x, y, False, col)
           arr[y].insert(x, node)
 
         x += 1
       y += 1
       x = 0
     
-    for row in arr:
-      for col in row:
-        self.get_neighbors(col, arr)
+    # for row in arr:
+    #   for col in row:
+    #     self.get_neighbors(col, arr)
 
+    self.current_scene.actors[0][1][0].set_grid(self.current_scene.data)
     return arr
 
   def next(self):
@@ -109,47 +67,35 @@ class State():
       self.current_scene = self.normalize(self.scenes[self.index])
 
   def build_scenes(self, scene_size=(100, 100), fcoef=0.4, iterations=6):
+    x=y=0
     arr = []
     scenes = self.split(gen_cave(scene_size, fcoef, iterations), 20, 25)
 
     for scene in scenes:
-      y = 0
-      x = 0
-      i = 0
+      rand_points = []
 
-      if y < len(scene):
-        t = []
-        b = []
-        l = []
-        r = []
-        
-        if y is len(scene): y = 0
-        
-        if x < len(scene[y]):
-          if x is len(scene[y]): x = 0
+      for row in scene:
+        for col in row:
+          if col == 1:
+            pos = (x, y)
+            rand_points.append(pos)
+          x+=1
+        y+=1
+        x=0
+      y=0
 
-          if i < len(scene[0]):
-            t.append((i, 0))
-            b.append((i, len(scene) - 1))
-            l.append((0, i))
-            r.append((len(scene[0]) - 1, i))
+      rand_pos = rand_points[rand(len(rand_points))]
 
-            next = Scene([t, l, b, r], [("players", []), ("npc", [])], self.normalize(scene))
-            arr.append(next)
-
-            i += 1
-          x += 1
-        y += 1
+      actors = [("players", [Actor(rand_pos[0], rand_pos[1])]), ("npc", [])]
+      next = Scene(actors, scene)
+      arr.append(next)
 
     return arr
 
   def set_mouse_target(self, target):
     self.mouse_target = target
+    self.current_scene.actors[0][1][0].get_mousepos(self.mouse_target)
     
-    t = self.current_scene.data[self.mouse_target[1]][self.mouse_target[0]]
-    # path = astar(np.array(self.current_scene.data), (1, 7), (t.x, t.y))
-    # print(path)
-
   def get_neighbors(self, t, arr):
     neighbors = []
     

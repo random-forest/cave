@@ -1,8 +1,8 @@
 import random
 import numpy as np
 
-WALL = 1
-FLOOR = 0
+WALL = 0
+FLOOR = 1
 
 def display_cave(matrix):
   for i in range(matrix.shape[0]):
