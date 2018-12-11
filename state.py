@@ -1,22 +1,16 @@
 import numpy as np
-import random, pprint, math
+import math
 
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
-from pprint import pprint as p
-
 from cave import gen_cave
+from utils import scale_pairs, rand
 from tile import Tile
 from scene import Scene
-from actor import Actor
-
-def scale_pairs(a, b, size):
-  return (a * size, b * size)
-
-def rand(size):
-  return math.floor(random.uniform(0, size))
+from enemy import Enemy
+from player import Player
                 
 class State():
   def __init__(self, scene_size=(100, 100)):
@@ -48,19 +42,12 @@ class State():
         x += 1
       y += 1
       x = 0
-    
-    # for row in arr:
-    #   for col in row:
-    #     self.get_neighbors(col, arr)
 
-    self.current_scene.actors[0][1][0].set_grid(self.current_scene.data)
+    self.current_scene.actors['players'][0].set_grid(self.current_scene.data)
+    self.current_scene.actors['npc'][0].set_grid(self.current_scene.data)
     return arr
 
   def next(self, pos):
-    scenes = self.scenes
-    x, y = pos
-
-    # print(scenes[y])
     if self.index < len(self.current_scene.data) - 1:
       self.current_scene = self.scenes[self.index]
       self.index += 1
@@ -95,10 +82,19 @@ class State():
         x=0
       y=0
 
-      rand_pos = rand_points[rand(len(rand_points))]
+      f = filter(lambda a: (a[0] > 2 or a[0] < 3) and (a[1] > 16 or a[1] < 18), rand_points)
+      rand_pos = list(f)[rand(len(rand_points))]
+
       sides = dict(top=top,left=left,bottom=bottom,right=right)
-      
-      actors = [("players", [Actor(rand_pos[0], rand_pos[1])]), ("npc", [])]
+      actors = dict(
+        players=[
+          Player(('top', (rand_pos[0], rand_pos[1])))
+        ],
+        npc=[
+          Enemy(self, ('left', (rand_pos[0], rand_pos[1])), 32, "green")
+        ]
+      )
+
       next = Scene(sides, actors, scene)
       arr.append(next)
 
@@ -106,7 +102,7 @@ class State():
 
   def set_mouse_target(self, target):
     self.mouse_target = target
-    self.current_scene.actors[0][1][0].get_mousepos(self.mouse_target)
+    self.current_scene.actors['players'][0].get_mousepos(self.mouse_target)
     
   def get_neighbors(self, t, arr):
     neighbors = []
@@ -123,14 +119,20 @@ class State():
     t.set_neighbors(neighbors)
 
   def update(self):
+    player = self.current_scene.actors['players'][0]
+    player.get_active_zone(self.normalize(self.current_scene.data))
+
+    npc = self.current_scene.actors['npc'][0]
+    npc.get_active_zone(self.normalize(self.current_scene.data))
+    
     sides = self.current_scene.sides
     top = sides['top']
     left = sides['left']
     bottom = sides['bottom']
     right = sides['right']
 
-    x = self.current_scene.actors[0][1][0].x
-    y = self.current_scene.actors[0][1][0].y
+    x = player.x
+    y = player.y
 
     tf = filter(lambda a: a[1] == (x, y), top)
     bf = filter(lambda a: a[1] == (x, y), bottom)
@@ -140,15 +142,18 @@ class State():
     if len(list(bf)) > 0:
       self.next((x, y))
       self.mouse_target = None
+      # self.current_scene.init(('bottom', (x, y)))
     if len(list(tf)) > 0:
       self.next((x, y))
       self.mouse_target = None
+      # self.current_scene.init(('top', (x, y)))
     if len(list(lf)) > 0:
       self.next((x, y))
       self.mouse_target = None
+      # self.current_scene.init(('left', (x, y)))
     if len(list(rf)) > 0:
       self.next((x, y))
       self.mouse_target = None
-    
+      # self.current_scene.init(('right', (x, y)))
 
       

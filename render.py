@@ -1,5 +1,5 @@
 import pygame, pprint, math
-from pprint import pprint as p
+from utils import scale_pairs
 
 WIN_WIDTH  = 800
 WIN_HEIGHT = 640
@@ -8,9 +8,6 @@ TILE_SIZE = 32
 
 DISPLAY_SIZE = (WIN_WIDTH, WIN_HEIGHT)
 BG_COLOR = "#000000"
-
-def scale_pairs(a, b, size):
-  return (a * size, b * size)
 
 class Render():
   def __init__(self, title, state):
@@ -98,23 +95,26 @@ class Render():
       p = scale_pairs(mt[0], mt[1], self.tile_size)
       self.draw_rect("blue", p)
 
-    player = self.state.current_scene.actors[0][1][0]
+    player = self.state.current_scene.actors['players'][0]
     player_pos = scale_pairs(player.x, player.y, player.width)
       
     player.update()
     self.draw_rect(player.color, player_pos)
 
+    # if len(player.active_zone) > 0:
+    #   for node in player.active_zone:
+    #     node_pos = scale_pairs(node[0], node[1], player.width)
+    #     self.draw_rect("purple", node_pos)
+
+    npc = self.state.current_scene.actors['npc'][0]
+    npc_pos = scale_pairs(npc.x, npc.y, npc.width)
+      
+    npc.update()
+    npc._update()
+    self.draw_rect(npc.color, npc_pos)
+
     self.draw_scene_sides()
     self.state.update()
-
-    # enter = self.state.current_scene.enter_points[0]
-    # exit = self.state.current_scene.enter_points[1]
-
-    # enter_pos = scale_pairs(enter.x, enter.y, self.tile_size)
-    # exit_pos = scale_pairs(exit.x, exit.y, self.tile_size)
-
-    # self.draw_rect("green", enter_pos)
-    # self.draw_rect("orange", exit_pos)
 
 
 

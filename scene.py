@@ -16,8 +16,6 @@ class Scene():
     self.enter_points = list()
     self.ndata = self.normalized()
 
-    self.init()
-
   def normalized(self):
     x=y=0
     matrix = self.data
@@ -40,69 +38,23 @@ class Scene():
     
     return arr
 
-  def init(self):
-    pass
-    # ndata = self.ndata
-    # narr = self.enter_points
+  def init(self, lp):
+    player = self.actors['players'][0]
+    player.set_lastpos(lp)
 
-    # r1 = rand(len(ndata))
-    # r2 = rand(len(ndata[0]))
+    last_pos = player.last_pos
 
-    # if ndata[r1][r2].walkable == False:
-    #   narr.append(ndata[r1][r2])
+    l_side = last_pos[0]
+    l_coords = last_pos[1]
 
-    #   r1 = rand(len(ndata))
-    #   r2 = rand(len(ndata[0]))
-    #   narr.append(ndata[r1][r2])
-    # else:
-    #   pass
-    # else:
-    #   return False
-
-      
-
-      
-    # arr = []
-    # data = self.data
-    # y = 0
-    # x = 0
-
-    # for line in data:
-    #   for node in line:
-    #     if node == 1: continue
-    #     if node == 0: arr.append((x, y))
-
-    #     x += 1
-    #   y += 1
-    #   x = 0
-
-    # t = list(filter(lambda x: x[1] == 0, arr))
-    # b = list(filter(lambda x: x[1] == len(data) - 1, arr))
-    # l = list(filter(lambda x: x[0] == 0 and x[1] < len(data) - 1, arr))
-    # r = list(filter(lambda x: x[0] == (len(data[0]) - 1) and x[1] < len(data) - 1, arr))
-
-    # t_pos = rand(len(t) - 1)
-
-    # if t_pos >= len(t): t_pos -= 1
-    # else:
-    #   try:
-    #     self.enter = t[t_pos]
-    #     # e_tar = self.data[self.enter[0]][self.enter[1]]
-
-    #     # if e_tar == 0: self.enter = t[t_pos]
-    #     # else: self.enter = t[t_pos]
-
-    #     b_pos = rand(len(b) - 1)
-    #     if b_pos >= len(b): b_pos -= 1
-    #     else:
-    #       try:
-    #         self.exit = b[b_pos]
-    #       except:
-    #         pass
-    #   except:
-    #     pass
-    # # self.enter = l[1]
-    # # self.exit = b[rand(19)]
+    if l_side is 'bottom':
+      print('bottom')
+    if l_side is 'top':
+      print('top')
+    if l_side is 'left':
+      print('left')
+    if l_side is 'right':
+      print('right')
 
 
 

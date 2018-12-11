@@ -20,6 +20,6 @@ class Events():
 
           self.state.set_mouse_target(pos)
           
-          player = self.state.current_scene.actors[0][1][0]
+          player = self.state.current_scene.actors['players'][0]
           player.set_path()
           
