@@ -43,8 +43,8 @@ def get_walkable(arr):
 class Enemy(Actor):
   def __init__(self, stats, state, lps=("top", (0, 0)), w=32, c="yellow"):
     Actor.__init__(self, lps, w, c)
-    self.hp = stats['hp']
-    self.lvl = stats['lvl']
+    self.hp = stats.hp
+    self.lvl = stats.lvl
     self.global_state = state
     self.tasks = []
 
@@ -56,7 +56,7 @@ class Enemy(Actor):
       last = self.path[len(self.path) - 1]
 
       if self.x == last[0] and self.y == last[1]:
-        player_hp -= 0.01
+        player_hp -= 0.1
       
         target.set_hp(player_hp)
         print("attack player! player hp -> %d" % target.hp)
@@ -77,7 +77,6 @@ class Enemy(Actor):
       x, y = node
 
       if y < pos['max']['y'] and x < pos['max']['x'] and x > pos['min']['x']:
-        print('idle')
         res.append(node)
 
     rand_pos = rand(len(res))

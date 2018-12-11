@@ -22,4 +22,3 @@ class Events():
           
           player = self.state.current_scene.actors['players'][0]
           player.set_path()
-          

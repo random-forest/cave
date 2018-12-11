@@ -1,6 +1,8 @@
 import numpy as np
 import math
 
+from config import Config
+
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
@@ -12,15 +14,17 @@ from scene import Scene
 from enemy import Enemy
 from player import Player
 
-player1 = dict(
-  hp=10,
-  lvl=1
-)
+config = Config()
 
-enemy1 = dict(
-  hp=5,
-  lvl=1
-)
+# player1 = dict(
+#   hp=10,
+#   lvl=1
+# )
+
+# enemy1 = dict(
+#   hp=5,
+#   lvl=1
+# )
                 
 class State():
   def __init__(self, scene_size=(100, 100)):
@@ -103,12 +107,11 @@ class State():
       sides = dict(top=top,left=left,bottom=bottom,right=right)
       actors = dict(
         players=[
-          Player(player1, ('top', rand_pos))
+          Player(config.actors.player, ('top', rand_pos), config.tile_size, config.colors.player)
         ],
         npc=[
-          Enemy(enemy1, self, ('left', rand_points[rand(len(rand_points))]), 32, "orange"),
-          Enemy(enemy1, self, ('right', rand_points[rand(len(rand_points))]), 32, "yellow"),
-          Enemy(enemy1, self, ('top', rand_points[rand(len(rand_points))]), 32, "purple")
+          Enemy(config.actors.enemies[0], self, ('left', rand_points[rand(len(rand_points))]), config.tile_size, config.colors.enemies.blue),
+          Enemy(config.actors.enemies[1], self, ('right', rand_points[rand(len(rand_points))]), config.tile_size, config.colors.enemies.orange)
         ]
       )
 

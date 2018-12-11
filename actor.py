@@ -31,6 +31,10 @@ class Actor(pygame.sprite.Sprite):
 
     self.last_pos = lps
 
+  def draw(self, screen):
+    rect = pygame.Rect(self.x*self.width, self.y*self.width, self.width, self.width)
+    pygame.draw.rect(screen, pygame.Color(self.color), rect)
+
   def set_grid(self, grid):
     self.grid = Grid(matrix=np.array(grid))
     self.start = self.grid.node(self.x, self.y)
@@ -43,8 +47,8 @@ class Actor(pygame.sprite.Sprite):
   def set_pos(self, x, y):
     self.x = x
     self.y = y
-    self.rect.x = x
-    self.rect.y = y
+    self.rect.left = x
+    self.rect.top = y
 
   def set_lastpos(self, data):
     self.last_pos = data
@@ -71,26 +75,24 @@ class Actor(pygame.sprite.Sprite):
 
     if index < len(path):
       step = path[index]
-      rev = (step[0], step[1])
 
-      if self.x > rev[0]:
+      if self.x > step[0]:
         self.x -= 1
-        self.rect.x = self.x
-      if self.x < rev[0]:
+        self.rect.move_ip(self.x, self.y)
+      if self.x < step[0]:
         self.x += 1
-        self.rect.x = self.x
+        self.rect.move_ip(self.x, self.y)
 
-      if self.y > rev[1]:
+      if self.y > step[1]:
         self.y -= 1
-        self.rect.y = self.y
-      if self.y < rev[1]:
+        self.rect.move_ip(self.x, self.y)
+      if self.y < step[1]:
         self.y += 1
-        self.rect.y = self.y
+        self.rect.move_ip(self.x, self.y)
 
-      if self.x == rev[0] and self.y == rev[1]:
+      if self.x == step[0] and self.y == step[1]:
         self.index += 1
 
     else:
-      if len(path) > 0:
-        self.path = []
-        self.index = 0
+      self.path = []
+      self.index = 0

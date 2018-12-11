@@ -45,7 +45,7 @@ class Scene():
     last_pos = player.last_pos
 
     l_side = last_pos[0]
-    l_coords = last_pos[1]
+    # l_coords = last_pos[1]
 
     if l_side is 'bottom':
       print('bottom')
