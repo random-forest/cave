@@ -11,6 +11,16 @@ from tile import Tile
 from scene import Scene
 from enemy import Enemy
 from player import Player
+
+player1 = dict(
+  hp=10,
+  lvl=1
+)
+
+enemy1 = dict(
+  hp=5,
+  lvl=1
+)
                 
 class State():
   def __init__(self, scene_size=(100, 100)):
@@ -88,10 +98,10 @@ class State():
       sides = dict(top=top,left=left,bottom=bottom,right=right)
       actors = dict(
         players=[
-          Player(('top', (rand_pos[0], rand_pos[1])))
+          Player(player1, ('top', rand_pos))
         ],
         npc=[
-          Enemy(self, ('left', (rand_pos[0], rand_pos[1])), 32, "green")
+          Enemy(enemy1, self, ('left', rand_points[rand(len(rand_points))]), 32, "green")
         ]
       )
 
@@ -103,28 +113,16 @@ class State():
   def set_mouse_target(self, target):
     self.mouse_target = target
     self.current_scene.actors['players'][0].get_mousepos(self.mouse_target)
-    
-  def get_neighbors(self, t, arr):
-    neighbors = []
-    
-    for x, y in [(t.x,t.y + 1),(t.x,t.y-1),(t.x + 1,t.y),(t.x-1,t.y),(t.x+1,t.y+1),(t.x+1,t.y-1),(t.x-1,t.y+1),(t.x-1,t.y-1)]:
-      if x >= len(arr[0]): continue
-      elif y >= len(arr): continue
-      elif x < 0: x = 0
-      elif y < 0: y = 0
-      else:
-        tt = arr[y][x]
-        neighbors.append(tt)
-
-    t.set_neighbors(neighbors)
 
   def update(self):
     player = self.current_scene.actors['players'][0]
     player.get_active_zone(self.normalize(self.current_scene.data))
 
-    npc = self.current_scene.actors['npc'][0]
-    npc.get_active_zone(self.normalize(self.current_scene.data))
-    
+    npcs = self.current_scene.actors['npc']
+
+    for npc in npcs:
+      npc.get_active_zone(self.normalize(self.current_scene.data))
+
     sides = self.current_scene.sides
     top = sides['top']
     left = sides['left']
@@ -142,18 +140,17 @@ class State():
     if len(list(bf)) > 0:
       self.next((x, y))
       self.mouse_target = None
-      # self.current_scene.init(('bottom', (x, y)))
+
     if len(list(tf)) > 0:
       self.next((x, y))
       self.mouse_target = None
-      # self.current_scene.init(('top', (x, y)))
+
     if len(list(lf)) > 0:
       self.next((x, y))
       self.mouse_target = None
-      # self.current_scene.init(('left', (x, y)))
+      
     if len(list(rf)) > 0:
       self.next((x, y))
       self.mouse_target = None
-      # self.current_scene.init(('right', (x, y)))
 
       

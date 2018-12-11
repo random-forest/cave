@@ -84,10 +84,10 @@ class Render():
           
         if node.walkable == False:
           self.draw_rect("red", pos)
-          self.draw_text(node.char, pos)
+          # self.draw_text(node.char, pos)
         if node.walkable == True:
           self.draw_rect("black", pos)
-          self.draw_text(node.char, pos)
+          # self.draw_text(node.char, pos)
 
     mt = self.state.mouse_target
 
@@ -95,25 +95,26 @@ class Render():
       p = scale_pairs(mt[0], mt[1], self.tile_size)
       self.draw_rect("blue", p)
 
-    player = self.state.current_scene.actors['players'][0]
-    player_pos = scale_pairs(player.x, player.y, player.width)
-      
-    player.update()
-    self.draw_rect(player.color, player_pos)
+    players = self.state.current_scene.actors['players']
 
-    # if len(player.active_zone) > 0:
-    #   for node in player.active_zone:
-    #     node_pos = scale_pairs(node[0], node[1], player.width)
+    for player in players:
+      player_pos = scale_pairs(player.x, player.y, player.width)
+      player.update()
+      self.draw_rect(player.color, player_pos)
+
+    npcs = self.state.current_scene.actors['npc']
+
+    for npc in npcs:
+      npc_pos = scale_pairs(npc.x, npc.y, npc.width)
+      npc._update()
+      self.draw_rect(npc.color, npc_pos)
+
+    # if len(npc.active_zone) > 0:
+    #   for node in npc.active_zone:
+    #     node_pos = scale_pairs(node[0], node[1], npc.width)
     #     self.draw_rect("purple", node_pos)
 
-    npc = self.state.current_scene.actors['npc'][0]
-    npc_pos = scale_pairs(npc.x, npc.y, npc.width)
-      
-    npc.update()
-    npc._update()
-    self.draw_rect(npc.color, npc_pos)
-
-    self.draw_scene_sides()
+    # self.draw_scene_sides()
     self.state.update()
 
 

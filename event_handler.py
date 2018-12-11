@@ -2,10 +2,10 @@ class EventHandler:
   def __init__(self):
     self.handlers = {}
 
-  def call(self, type):
+  def call(self, type, paren, args):
     if type in self.handlers:
       for h in self.handlers[type]:
-        h()
+        h(paren, args)
 
   def event(self, type):
     def registerhandler(handler):

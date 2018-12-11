@@ -4,10 +4,6 @@ class Tile():
     self.y = y
     self.walkable = walkable
     self.char = char
-    self.neighbors = None
-
-  def set_neighbors(self, value):
-    self.neighbors = value
 
   def get_position(self, arr):
     x = self.x
