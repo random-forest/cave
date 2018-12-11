@@ -1,2 +1,5 @@
-# chmod +x ./build.sh
-# python3 main.py
+chmod +x ./build.sh
+
+./build.sh
+
+python3 main.py
