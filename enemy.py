@@ -79,6 +79,7 @@ class Enemy(Actor):
       x, y = node
 
       if y < pos['max']['y'] and x < pos['max']['x'] and x > pos['min']['x']:
+        print('idle')
         res.append(node)
 
     rand_pos = rand(len(res))
@@ -101,7 +102,6 @@ class Enemy(Actor):
         ev.call("attack", self, player)
         self.update()
       else:
-        print('idle')
         ev.call("idle", self, [scene.data, dict(min=min, max=max)])
         self.update()
 
