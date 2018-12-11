@@ -36,7 +36,6 @@ class Render():
     while 1:
       self.clock.tick(config.fps)
       self.screen.blit(self.bg, (0, 0))
-
       for fn in targets:
         fn()
       self.update()
@@ -46,6 +45,10 @@ class Render():
     rect.fill(pygame.Color(color))
 
     self.screen.blit(rect, pos)
+
+  def draw_circle(self, color, pos, radius):
+    pygame.draw.circle(self.screen, pygame.Color(color), pos, radius, 2)
+    # pygame.display.flip()
 
   def draw_line(self, color, spos, epos):
     pygame.draw.line(self.screen, pygame.Color(color), spos, epos)
@@ -99,9 +102,9 @@ class Render():
 
     mt = self.state.mouse_target
 
-    if mt != None:
-      p = scale_pairs(mt[0], mt[1], config.tile_size)
-      self.draw_rect("blue", p)
+    # if mt != None:
+    #   p = scale_pairs(mt[0], mt[1], config.tile_size)
+    #   self.draw_rect("blue", p)
 
     players = self.state.current_scene.actors['players']
 
@@ -117,7 +120,9 @@ class Render():
       npc._update()
       npc.draw(self.screen)
       self.draw_text("black", '{0}'.format(int(npc.hp)), (npc.x*config.tile_size, npc.y*config.tile_size))
-      # self.draw_rect(npc.color, npc_pos)
+
+      for path in npc.path:
+        self.draw_circle(npc.color, scale_pairs(math.floor(path[0]), math.floor(path[1]), config.tile_size), 12)
 
     # if len(npc.active_zone) > 0:
     #   for node in npc.active_zone:

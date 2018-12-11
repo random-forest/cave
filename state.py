@@ -1,12 +1,11 @@
 import numpy as np
 import math
 
-from config import Config
-
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
+from config import Config
 from cave import gen_cave
 from utils import scale_pairs, rand
 from tile import Tile
@@ -15,16 +14,6 @@ from enemy import Enemy
 from player import Player
 
 config = Config()
-
-# player1 = dict(
-#   hp=10,
-#   lvl=1
-# )
-
-# enemy1 = dict(
-#   hp=5,
-#   lvl=1
-# )
                 
 class State():
   def __init__(self, scene_size=(100, 100)):

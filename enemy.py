@@ -43,7 +43,13 @@ def get_walkable(arr):
 class Enemy(Actor):
   def __init__(self, stats, state, lps=("top", (0, 0)), w=32, c="yellow"):
     Actor.__init__(self, lps, w, c)
+    self.name = stats.name
+    self.clas = stats.clas
     self.hp = stats.hp
+    self.atk = stats.atk
+    self.dfs = stats.dfs
+    self.pts = stats.pts
+    self.exp = stats.exp
     self.lvl = stats.lvl
     self.global_state = state
     self.tasks = []
@@ -56,10 +62,11 @@ class Enemy(Actor):
       last = self.path[len(self.path) - 1]
 
       if self.x == last[0] and self.y == last[1]:
-        player_hp -= 0.1
+        dmg = (0.05 + (self.atk / 100)) - (target.dfs / 100)
+        player_hp -= dmg
       
         target.set_hp(player_hp)
-        print("attack player! player hp -> %d" % target.hp)
+        print('"{0}" is attacking "{1}" with damage - {2}'.format(self.name, target.name, dmg))
 
   @ev.event("follow")
   def follow(self, pos):
