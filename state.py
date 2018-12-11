@@ -53,8 +53,13 @@ class State():
       y += 1
       x = 0
 
+    npcs = self.current_scene.actors['npc']
+
     self.current_scene.actors['players'][0].set_grid(self.current_scene.data)
-    self.current_scene.actors['npc'][0].set_grid(self.current_scene.data)
+
+    for npc in npcs:
+      npc.set_grid(self.current_scene.data)
+    # self.current_scene.actors['npc'][0].set_grid(self.current_scene.data)
     return arr
 
   def next(self, pos):
@@ -101,7 +106,9 @@ class State():
           Player(player1, ('top', rand_pos))
         ],
         npc=[
-          Enemy(enemy1, self, ('left', rand_points[rand(len(rand_points))]), 32, "green")
+          Enemy(enemy1, self, ('left', rand_points[rand(len(rand_points))]), 32, "orange"),
+          Enemy(enemy1, self, ('right', rand_points[rand(len(rand_points))]), 32, "yellow"),
+          Enemy(enemy1, self, ('top', rand_points[rand(len(rand_points))]), 32, "purple")
         ]
       )
 

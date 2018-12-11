@@ -1,5 +1,4 @@
-import time, timeout_decorator, math, asyncio, numpy as np
-from timeout_decorator import timeout
+import time, math, numpy as np
 
 from actor import Actor
 from event_handler import EventHandler
@@ -40,8 +39,6 @@ def get_walkable(arr):
 
   return res
 
-def get_rand_pos(data):
-  return data
 
 class Enemy(Actor):
   def __init__(self, stats, state, lps=("top", (0, 0)), w=32, c="yellow"):
@@ -49,11 +46,12 @@ class Enemy(Actor):
     self.hp = stats['hp']
     self.lvl = stats['lvl']
     self.global_state = state
+    self.tasks = []
 
   @ev.event("attack")
   def attack(self, target):
     player_hp = target.hp
-    
+
     if len(self.path) > 0:
       last = self.path[len(self.path) - 1]
 
