@@ -43,14 +43,7 @@ def get_walkable(arr):
 class Enemy(Actor):
   def __init__(self, stats, state, lps=("top", (0, 0)), w=32, c="yellow"):
     Actor.__init__(self, lps, w, c)
-    self.name = stats.name
-    self.clas = stats.clas
-    self.hp = stats.hp
-    self.atk = stats.atk
-    self.dfs = stats.dfs
-    self.pts = stats.pts
-    self.exp = stats.exp
-    self.lvl = stats.lvl
+    self.extends(stats)
     self.global_state = state
     self.tasks = []
 

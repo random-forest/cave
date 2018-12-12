@@ -4,13 +4,6 @@ from config import Config
 
 config = Config()
 
-FPS = config.fps
-
-TILE_SIZE = config.tile_size
-
-DISPLAY_SIZE = config.screen.size
-BG_COLOR = config.colors.background
-
 class Render():
   def __init__(self, title, state):
     pygame.font.init()

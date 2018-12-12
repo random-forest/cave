@@ -5,6 +5,8 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
+from config import Config
+
 class Actor(pygame.sprite.Sprite):
   def __init__(self, lps=("top", (0, 0)), w=32, c="grey"):
     pygame.sprite.Sprite.__init__(self)
@@ -61,6 +63,7 @@ class Actor(pygame.sprite.Sprite):
 
   def get_active_zone(self, arr):
     max = 4
+
     sides = [(self.x,self.y + max),(self.x,self.y-max),(self.x + max,self.y),(self.x-max,self.y),(self.x+max,self.y+max),(self.x+max,self.y-max),(self.x-max,self.y+max),(self.x-max,self.y-max)]
     res = []
 
@@ -96,3 +99,7 @@ class Actor(pygame.sprite.Sprite):
     else:
       self.path = []
       self.index = 0
+
+  def extends(self, props):
+    for key in vars(props):
+      self.__setattr__(key, vars(props)[key])

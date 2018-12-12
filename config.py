@@ -6,7 +6,7 @@ class Object():
 class Config():
   def __init__(self):
     self.tile_size = 32
-    self.fps = 60
+    self.fps = 30
     self.font = Object(dict(
       family="Roboto Mono", 
       size=18
@@ -20,7 +20,11 @@ class Config():
       ground="darkgrey",
       walls="black",
       player="red",
-      enemies=Object(dict(orange="orange", green="green", blue="blue"))
+      enemies=Object(dict(
+        orange="orange", 
+        green="green", 
+        blue="blue"
+      ))
     ))
     self.actors=Object(dict(
       player=Object(dict(
@@ -40,7 +44,7 @@ class Config():
           hp=5,
           atk=0.1,
           dfs=0.1,
-          pts=4,
+          pts=5,
           lvl=0,
           exp=10
         )),
@@ -50,7 +54,7 @@ class Config():
           hp=6,
           atk=0.2,
           dfs=0.3,
-          pts=4,
+          pts=5,
           lvl=0,
           exp=23
         ))
