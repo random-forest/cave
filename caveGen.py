@@ -1,17 +1,9 @@
-import random
-import numpy as np
+import random, numpy as np
 
-WALL = 0
+WALL  = 0
 FLOOR = 1
-
-def display_cave(matrix):
-  for i in range(matrix.shape[0]):
-    for j in range(matrix.shape[1]):
-      char = "#" if matrix[i][j] == WALL else " "
-      print(char, end='')
-    print()
         
-def gen_cave(size, fill_coef, cycles):
+def generateCave(size, fill_coef, cycles):
   shape = size
   fill_prob = fill_coef
 

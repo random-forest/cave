@@ -1,17 +1,17 @@
+from pygame import Rect, Color
+from config import config
+
 class Tile():
-  def __init__(self, x, y, walkable=False, char=1):
+  def __init__(self, x, y, color="white", walkable=True):
     self.x = x
     self.y = y
+    self.color = Color(color)
     self.walkable = walkable
-    self.char = char
 
-  def get_position(self, arr):
-    x = self.x
-    y = self.y
+    self.rect = Rect(self.x*config.tileSize, self.y*config.tileSize, config.tileSize, config.tileSize)
 
-    if x >= len(arr[0]): x -= 1
-    elif y >= len(arr): y -= 1
-    elif x < 0: x = 0
-    elif y < 0: y = 0
-    else:
-      return (arr[y][x].x, arr[y][x].y)
+  def setPos(self, pos):
+    self.x = pos[0]
+    self.y = pos[1]
+    self.rect.left = self.x*config.tileSize
+    self.rect.top = self.y*config.tileSize

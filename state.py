@@ -1,155 +1,61 @@
-import numpy as np
-import math
-
-from pathfinding.core.diagonal_movement import DiagonalMovement
-from pathfinding.core.grid import Grid
-from pathfinding.finder.a_star import AStarFinder
-
-from config import Config
-from cave import gen_cave
-from utils import scale_pairs, rand
-from tile import Tile
-from scene import Scene
-from enemy import Enemy
+from config import config
+from caveGen import generateCave
+from utils import reverseTuple, getRandomPoint
+from eventHandler import EventHandler
 from player import Player
+from enemy import Enemy
 
-config = Config()
-                
-class State():
-  def __init__(self, scene_size=(100, 100)):
-    self.index = 0
-    self.mouse_target = None
-    self.scenes = self.build_scenes(scene_size)
-    
-    self.current_scene = self.scenes[self.index]
+class State(EventHandler):
+  def __init__(self, scenes=[], actors=[]):
+    EventHandler.__init__(self)
 
-  def split(self, array, nrows, ncols):
-    r, h = array.shape
-    return (array.reshape(h//nrows, nrows, -1, ncols).swapaxes(1, 2).reshape(-1, nrows, ncols))
+    self.scenes = scenes
+    self.sceneIndex = 0
+    self.currentScene = self.getCurrentScene()
 
-  def normalize(self, matrix):
-    x=y=0
-    arr = []
+    self.actors = actors
+    self.actorIndex = 0
+    self.currentActor = self.getCurrentActor()
 
-    for row in matrix:
-      arr.insert(y, [])
-      for col in row:
-        if col == 1:
-          node = Tile(x, y, True, col)
-          arr[y].insert(x, node)
+    self.mouseTarget = False
 
-        if col == 0:
-          node = Tile(x, y, False, col)
-          arr[y].insert(x, node)
+  def getCurrentScene(self):
+    try: return self.scenes[self.sceneIndex]
+    except: return False
 
-        x += 1
-      y += 1
-      x = 0
+  def addScene(self, scene):
+    self.scenes.append(scene)
+    self.currentScene = self.getCurrentScene()
 
-    npcs = self.current_scene.actors['npc']
+  def getCurrentActor(self):
+    try: return self.actors[self.actorIndex]
+    except: return False
 
-    self.current_scene.actors['players'][0].set_grid(self.current_scene.data)
+  def addActor(self, actor):
+    self.actors.append(actor)
+    self.currentActor = self.getCurrentActor()
 
-    for npc in npcs:
-      npc.set_grid(self.current_scene.data)
-    # self.current_scene.actors['npc'][0].set_grid(self.current_scene.data)
-    return arr
+  def nextScene(self):
+    self.sceneIndex += 1
 
-  def next(self, pos):
-    if self.index < len(self.current_scene.data) - 1:
-      self.current_scene = self.scenes[self.index]
-      self.index += 1
-    else:
-      self.index = 0
-      self.current_scene = self.scenes[self.index]
+  def nextActor(self):
+    self.actorIndex += 1
 
-  def build_scenes(self, scene_size=(100, 100), fcoef=0.4, iterations=7):
-    x=y=0
-    arr=[]
-    scenes = self.split(gen_cave(scene_size, fcoef, iterations), 20, 25)
-    for scene in scenes:
-      top = list()
-      bottom = list()
-      right = list()
-      left = list()
-      rand_points = list()
+state = State()
+
+@state.event("set_mouse_target")
+def setMouseTarget(pos):
+  state.mouseTarget = reverseTuple(pos, lambda a: int(a))
+
+@state.event("add_actors")
+def addActors(actors):
+  state.addActor(Player(actors.get('player')))
+  map(lambda a: state.addActor(Enemy(a)), actors.get('npc'))
 
 
-      for row in scene:
-        for col in row:
-          top.append((scene[0][x], (x, 0)))
-          bottom.append((scene[len(scene) - 1][x], (x, len(scene) - 1)))
-          right.append((scene[y][len(scene[0]) - 1], (len(scene[0]) - 1, y)))
-          left.append((scene[y][0], (0, y)))
-          if col == 1:
-            pos = (x, y)
-            rand_points.append(pos)
+@state.event("add_scene")
+def addScenes(scene):
+  state.addScene(scene)
 
-          x+=1
-        y+=1
-        x=0
-      y=0
-
-      f = filter(lambda a: (a[0] > 2 or a[0] < 3) and (a[1] > 16 or a[1] < 18), rand_points)
-      rand_pos = list(f)[rand(len(rand_points))]
-
-      sides = dict(top=top,left=left,bottom=bottom,right=right)
-      actors = dict(
-        players=[
-          Player(config.actors.player, ('top', rand_pos), config.tile_size, config.colors.player)
-        ],
-        npc=[
-          Enemy(config.actors.enemies[0], self, ('left', rand_points[rand(len(rand_points))]), config.tile_size, config.colors.enemies.blue),
-          Enemy(config.actors.enemies[1], self, ('right', rand_points[rand(len(rand_points))]), config.tile_size, config.colors.enemies.orange)
-        ]
-      )
-
-      next = Scene(sides, actors, scene)
-      arr.append(next)
-
-    return arr
-
-  def set_mouse_target(self, target):
-    self.mouse_target = target
-    self.current_scene.actors['players'][0].get_mousepos(self.mouse_target)
-
-  def update(self):
-    player = self.current_scene.actors['players'][0]
-    player.get_active_zone(self.normalize(self.current_scene.data))
-
-    npcs = self.current_scene.actors['npc']
-
-    for npc in npcs:
-      npc.get_active_zone(self.normalize(self.current_scene.data))
-
-    sides = self.current_scene.sides
-    top = sides['top']
-    left = sides['left']
-    bottom = sides['bottom']
-    right = sides['right']
-
-    x = player.x
-    y = player.y
-
-    tf = filter(lambda a: a[1] == (x, y), top)
-    bf = filter(lambda a: a[1] == (x, y), bottom)
-    lf = filter(lambda a: a[1] == (x, y), left)
-    rf = filter(lambda a: a[1] == (x, y), right)
-
-    if len(list(bf)) > 0:
-      self.next((x, y))
-      self.mouse_target = None
-
-    if len(list(tf)) > 0:
-      self.next((x, y))
-      self.mouse_target = None
-
-    if len(list(lf)) > 0:
-      self.next((x, y))
-      self.mouse_target = None
-      
-    if len(list(rf)) > 0:
-      self.next((x, y))
-      self.mouse_target = None
-
-      
+state.call("add_scene", generateCave(config.levelSize, 0.4, 6))
+state.call("add_actors", config.actors)
