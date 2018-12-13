@@ -11,7 +11,7 @@ class Render(EventHandler):
     EventHandler.__init__(self)
 
     self.init()
-    self.screen = pygame.display.set_mode((config.levelSize[1] * config.tileSize, config.levelSize[0] * config.tileSize))
+    self.screen = pygame.display.set_mode(config.windowSize)
     self.font = pygame.font.SysFont(config.font[0], config.font[1])
 
     self.loopRunning = True
@@ -52,9 +52,9 @@ class Render(EventHandler):
     for row in state.currentScene:
       for char in row:
         if char == 1:
-          self.drawRect(Tile(x, y, "black", False))
-        if char == 0:
           self.drawRect(Tile(x, y, "grey", True))
+        if char == 0:
+          self.drawRect(Tile(x, y, "black", False))
         x += 1
       y += 1
       x = 0

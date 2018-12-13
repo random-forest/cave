@@ -52,10 +52,9 @@ def addActors(actors):
   state.addActor(Player(actors.get('player')))
   map(lambda a: state.addActor(Enemy(a)), actors.get('npc'))
 
-
 @state.event("add_scene")
 def addScenes(scene):
   state.addScene(scene)
 
-state.call("add_scene", generateCave(config.levelSize, 0.4, 6))
+state.call("add_scene", generateCave(config.levelSize, 0.4, 7))
 state.call("add_actors", config.actors)

@@ -1,7 +1,8 @@
 class Config():
   def __init__(self):
-    self.tileSize = 32
-    self.levelSize = (19, 25)
+    self.tileSize = 16
+    self.levelSize = (24, 32)
+    self.windowSize = (800,600)
     self.font = ("Arial", 21)
     self.actors = {
       'player': {
