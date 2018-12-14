@@ -1,9 +1,11 @@
 from config import config
-
 from tile import Tile
 from utils import getRandomPoint 
-
 from state import state
+
+from pathfinding.core.diagonal_movement import DiagonalMovement
+from pathfinding.core.grid import Grid
+from pathfinding.finder.a_star import AStarFinder
 
 class Actor(Tile):
   def __init__(self, props, x=0, y=0, random_pos=True):
