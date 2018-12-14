@@ -19,6 +19,5 @@ def getRandomPoint(target, min=0):
     return (a, b)
   else:
     a = int(floor(random.uniform(min, len(target) - 1)))
-    b = int(floor(random.uniform(min, len(target[0]) - 1)))
 
-    return (a, b) 
+    return target[a]

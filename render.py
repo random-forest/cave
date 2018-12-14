@@ -41,6 +41,7 @@ class Render(EventHandler):
         if e.button == 1:
           x,y = e.pos
           state.call("set_mouse_target", scale_to_pos(x, y))
+          state.currentActor.setPath()
 
   def drawActors(self):
     for actor in state.actors:
@@ -58,5 +59,4 @@ class Render(EventHandler):
         x += 1
       y += 1
       x = 0
-    # y = 0
 

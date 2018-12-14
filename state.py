@@ -1,9 +1,5 @@
-from config import config
-from caveGen import generateCave
-from utils import reverseTuple, getRandomPoint
+from utils import reverseTuple
 from eventHandler import EventHandler
-from player import Player
-from enemy import Enemy
 
 class State(EventHandler):
   def __init__(self, scenes=[], actors=[]):
@@ -45,16 +41,25 @@ state = State()
 
 @state.event("set_mouse_target")
 def setMouseTarget(pos):
-  state.mouseTarget = reverseTuple(pos, lambda a: int(a))
+  position = reverseTuple(pos, lambda a: int(a))
+  y, x = position
+  try:
+    target = state.currentScene[y][x]
+    state.mouseTarget = (y, x)
+    print(state.mouseTarget)
+  except: pass
 
 @state.event("add_actors")
 def addActors(actors):
-  state.addActor(Player(actors.get('player')))
-  map(lambda a: state.addActor(Enemy(a)), actors.get('npc'))
+  arr = []
+  for actor in actors:
+    try:
+      if len(actor) >= 0:
+        map(lambda a: arr.append(a), actor)
+    except:
+      arr.append(actor)
+  map(lambda a: state.addActor(a), arr)
 
 @state.event("add_scene")
 def addScenes(scene):
   state.addScene(scene)
-
-state.call("add_scene", generateCave(config.levelSize, 0.4, 7))
-state.call("add_actors", config.actors)
