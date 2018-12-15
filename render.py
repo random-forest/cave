@@ -32,6 +32,8 @@ class Render(EventHandler):
       self.listenKeyboard()
       self.drawScene()
       self.drawActors()
+      state.currentActor.update()
+      # self.drawActorPath()
       self.update()
 
   def listenKeyboard(self):
@@ -40,12 +42,22 @@ class Render(EventHandler):
       if e.type == pygame.MOUSEBUTTONDOWN:
         if e.button == 1:
           x,y = e.pos
-          state.call("set_mouse_target", scale_to_pos(x, y))
-          state.currentActor.setPath()
+
+          if state.currentActor != False:
+            if state.currentActor.type == 'player':
+              state.currentActor.setTarget(scale_to_pos(y, x))
+              state.currentActor.setPath()
 
   def drawActors(self):
     for actor in state.actors:
       self.drawRect(actor)
+
+  def drawActorPath(self):
+    path = state.currentActor.path
+
+    if len(path) > 0:
+      for p in path:
+        self.drawRect(Tile(p[0], p[1], "orange"))
 
   def drawScene(self):
     x = y = 0

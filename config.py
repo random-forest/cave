@@ -6,6 +6,7 @@ class Config():
     self.font = ("Arial", 21)
     self.actors = {
       'player': {
+        'type': 'player',
         'name': 'nikto',
         'race': 'goblin',
         'clas': 'rogue',
@@ -17,7 +18,8 @@ class Config():
       },
 
       'npc': [
-        {
+        { 
+          'type': 'npc',
           'name': 'ahgrakhnak',
           'race': 'goblin',
           'clas': 'warrior',

@@ -13,8 +13,6 @@ class State(EventHandler):
     self.actorIndex = 0
     self.currentActor = self.getCurrentActor()
 
-    self.mouseTarget = False
-
   def getCurrentScene(self):
     try: return self.scenes[self.sceneIndex]
     except: return False
@@ -35,19 +33,16 @@ class State(EventHandler):
     self.sceneIndex += 1
 
   def nextActor(self):
-    self.actorIndex += 1
+    if self.actorIndex == len(self.actors) - 1: 
+      self.actorIndex = 0
+      self.currentActor = self.getCurrentActor()
+      self.currentActor.reload()
+    else:
+      self.actorIndex += 1
+      self.currentActor = self.getCurrentActor()
+      self.currentActor.reload()
 
 state = State()
-
-@state.event("set_mouse_target")
-def setMouseTarget(pos):
-  position = reverseTuple(pos, lambda a: int(a))
-  y, x = position
-  try:
-    target = state.currentScene[y][x]
-    state.mouseTarget = (y, x)
-    print(state.mouseTarget)
-  except: pass
 
 @state.event("add_actors")
 def addActors(actors):
