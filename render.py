@@ -33,12 +33,17 @@ class Render(EventHandler):
       self.drawScene()
       self.drawActors()
       state.currentActor.update()
-      # self.drawActorPath()
+      self.drawActorPath()
+      self.drawActiveZone()
       self.update()
 
   def listenKeyboard(self):
     for e in pygame.event.get():
       if e.type == pygame.QUIT: sys.exit(0)
+      if e.type == pygame.KEYDOWN:
+        if e.key == 32:
+          state.nextActor()
+
       if e.type == pygame.MOUSEBUTTONDOWN:
         if e.button == 1:
           x,y = e.pos
@@ -51,6 +56,12 @@ class Render(EventHandler):
   def drawActors(self):
     for actor in state.actors:
       self.drawRect(actor)
+
+  def drawActiveZone(self):
+    target = state.currentActor
+
+    for node in target.activeZone:
+      self.drawRect(Tile(node[1], node[0], "green"))
 
   def drawActorPath(self):
     path = state.currentActor.path
