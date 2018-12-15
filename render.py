@@ -24,17 +24,19 @@ class Render(EventHandler):
   def update(self):
     pygame.display.flip()
 
-  def drawRect(self, target):
-    pygame.draw.rect(self.screen, target.color, target.rect)
+  def drawRect(self, target, width=0):
+    pygame.draw.rect(self.screen, target.color, target.rect, width)
 
   def loop(self):
     while self.loopRunning:
       self.listenKeyboard()
       self.drawScene()
       self.drawActors()
+
       state.currentActor.update()
+      
       self.drawActorPath()
-      self.drawActiveZone()
+      self.drawNeighbors()
       self.update()
 
   def listenKeyboard(self):
@@ -57,18 +59,18 @@ class Render(EventHandler):
     for actor in state.actors:
       self.drawRect(actor)
 
-  def drawActiveZone(self):
+  def drawNeighbors(self):
     target = state.currentActor
-
-    for node in target.activeZone:
-      self.drawRect(Tile(node[1], node[0], "green"))
+    if target.type == 'npc':
+      for node in target.neighbors:
+        self.drawRect(Tile(node[1], node[0], "green"), 1)
 
   def drawActorPath(self):
     path = state.currentActor.path
 
     if len(path) > 0:
       for p in path:
-        self.drawRect(Tile(p[0], p[1], "orange"))
+        self.drawRect(Tile(p[0], p[1], "red"), 1)
 
   def drawScene(self):
     x = y = 0
