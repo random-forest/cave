@@ -10,6 +10,25 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
+def getZoneBorders(arr):
+  y = []
+  x = []
+
+  for node in arr:
+    y.append(node[1])
+    x.append(node[0])
+
+  if len(y) > 0 and len(x) > 0:
+    miny = min(y)
+    maxy = max(y)
+    minx = min(x)
+    maxx = max(x)
+
+    return dict(
+      min={'x': minx, 'y': miny},
+      max={'x': maxx, 'y': maxy}
+    )
+
 class Actor(Tile):
   def __init__(self, props, x=0, y=0, random_pos=True):
     Tile.__init__(self, x, y, props.get('color'))
@@ -48,9 +67,10 @@ class Actor(Tile):
     self.path = path
 
   def update(self):
-    self.setActiveZone()
+    borders = getZoneBorders(self.setActiveZone())
     targets = list(filter(lambda a: a.type != self.type, state.actors))
     
+    print(borders)
     # for target in targets:
     #   isInZone = list(filter(lambda a: a[0] == target.y and a[1] == target.x, self.setActiveZone()))
     #   if len(isInZone) > 0:
