@@ -1,29 +1,19 @@
-from render import Render
-from events import Events
-from state import State
+from __future__ import print_function
 
-def scale_pairs(a, b, size):
-  return (a * size, b * size)
+import pyxel
+from config import *
+
+from render import Render
+from player import Player
+from enemy import Enemy
+from game import game
+
+game.setPlayer(Player(10, game.currentRoom, (71, 51), 15))
+game.addActor(Enemy(7, game.currentRoom, (96, 118), 3))
+game.addActor(Enemy(2, game.currentRoom, (64, 142), 3))
 
 def main():
-  render = Render("((())0")
-  events = Events()
-  state  = State()
-
-  def draw_stage():
-    for row in state.current_stage:
-      for node in row:
-        pos = scale_pairs(node.x, node.y, render.tile_size)
-
-        if node.walkable == False:
-          render.draw_rect("red", pos)
-        if node.walkable == True:
-          render.draw_rect("black", pos)
-
-  render.loop([
-    events.catch,
-    draw_stage
-  ])
+  Render()
 
 if __name__ == "__main__":
   main()

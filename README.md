@@ -1,2 +1,2 @@
-# chmod +x ./build.sh
-# python3 main.py
+# pip install -r requirements.txt
+# python -B main.py
